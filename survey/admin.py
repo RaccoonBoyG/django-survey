@@ -30,6 +30,7 @@ class SurveyAdmin(admin.ModelAdmin):
     list_filter = ("is_published", "need_logged_user")
     inlines = [CategoryInline, QuestionInline]
     actions = [make_published, Survey2Csv.export_as_csv, Survey2Tex.export_as_tex]
+    search_fields = ['name']
 
 
 class AnswerBaseInline(admin.StackedInline):
@@ -48,7 +49,23 @@ class ResponseAdmin(admin.ModelAdmin):
     readonly_fields = ("survey", "created", "updated", "interview_uuid", "user")
 
 
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "survey", "order")
+    list_filter = ("survey", "name")
+    search_fields = ['survey', ]
+    autocomplete_fields = ['survey', ]
+
+
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ("text", "survey", "order")
+    list_filter = ("survey", "category")
+    search_fields = ['survey', ]
+    autocomplete_fields = ['survey', "category"]
+
+
 # admin.site.register(Question, QuestionInline)
 # admin.site.register(Category, CategoryInline)
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Survey, SurveyAdmin)
 admin.site.register(Response, ResponseAdmin)
